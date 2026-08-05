@@ -1,0 +1,81 @@
+:root {
+  --bg-deep: #070a0f;
+  --bg-surface: #0d1219;
+  --bg-elevated: #131b24;
+  --cyan: #32c5e9;
+  --cyan-dim: rgba(50, 197, 233, 0.14);
+  --cyan-glow: rgba(50, 197, 233, 0.24);
+  --orange: #ff6b45;
+  --green: #5ecb8b;
+  --steel: #aab8cc;
+  --steel-dim: rgba(170, 184, 204, 0.18);
+  --text: #f0f3f7;
+  --text-secondary: #b2bed0;
+  --text-muted: #7f8da2;
+  --border: rgba(170, 184, 204, 0.16);
+  --border-accent: rgba(50, 197, 233, 0.34);
+  --font-display: 'Bahnschrift', 'Arial Narrow', 'Segoe UI', sans-serif;
+  --font-mono: 'Cascadia Mono', 'SFMono-Regular', Consolas, monospace;
+  --font-cn: 'Microsoft YaHei UI', 'PingFang SC', 'Noto Sans CJK SC', sans-serif;
+  --grid-size: 48px;
+  --grid-dot: rgba(170, 184, 204, 0.055);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  scroll-behavior: smooth;
+  background: var(--bg-deep);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  font-family: var(--font-cn);
+  background-color: var(--bg-deep);
+  background-image: radial-gradient(circle, var(--grid-dot) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, a {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: #334052; }
+::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+
+::selection {
+  background: rgba(50, 197, 233, 0.28);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

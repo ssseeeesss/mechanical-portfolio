@@ -1,0 +1,38 @@
+.app {
+  width: 100%;
+  overflow-x: clip;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 1000;
+  padding: 0.65rem 0.9rem;
+  background: var(--text);
+  color: var(--bg-deep);
+  text-decoration: none;
+  transform: translateY(-150%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.section-divider {
+  position: relative;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border) 18%, var(--cyan-dim) 50%, var(--border) 82%, transparent);
+}
+
+.section-divider::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  background: var(--cyan);
+  transform: translate(-50%, -50%) rotate(45deg);
+}

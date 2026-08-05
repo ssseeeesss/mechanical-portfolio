@@ -1,0 +1,188 @@
+.project-media { min-width: 0; }
+
+.project-media-tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.35rem;
+  margin-bottom: 0.55rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.project-media-tabs button {
+  position: relative;
+  min-height: 36px;
+  padding: 0.45rem 0.75rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.project-media-tabs button:hover,
+.project-media-tabs button:focus-visible { color: var(--text); }
+
+.project-media-tabs button.active {
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+
+.project-media-tabs button span {
+  margin-left: 0.45rem;
+  padding: 0.12rem 0.3rem;
+  border: 1px solid var(--border);
+  font-size: 0.54rem;
+  color: var(--text-muted);
+}
+
+.model-status,
+.model-module-loading {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #080c12;
+}
+
+.model-status-poster,
+.model-module-loading img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.16;
+  filter: grayscale(0.45) contrast(1.08);
+}
+
+.model-status::after,
+.model-module-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(8, 12, 18, 0.96) 0%, rgba(8, 12, 18, 0.74) 58%, rgba(8, 12, 18, 0.42) 100%);
+}
+
+.model-status-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.24;
+  background-image:
+    linear-gradient(rgba(47, 200, 242, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 200, 242, 0.15) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to right, #000, transparent 82%);
+}
+
+.model-status-content {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 1.4rem;
+  width: min(62%, 390px);
+  transform: translateY(-50%);
+}
+
+.model-status-code {
+  display: inline-block;
+  margin-bottom: 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.model-status-content h4 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--text);
+}
+
+.model-status-content p {
+  margin: 0.65rem 0 0;
+  font-size: 0.76rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.model-status-retry {
+  margin-top: 0.85rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--border-accent);
+  background: var(--bg-surface);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--cyan);
+  cursor: pointer;
+}
+
+.model-status-hotspots {
+  position: absolute;
+  z-index: 2;
+  right: 1rem;
+  bottom: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+  width: min(43%, 250px);
+}
+
+.model-status-hotspots div {
+  min-width: 0;
+  padding: 0.4rem 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(47, 200, 242, 0.17);
+  background: rgba(8, 12, 18, 0.74);
+}
+
+.model-status-hotspots span {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  color: var(--accent);
+}
+
+.model-status-hotspots strong {
+  overflow: hidden;
+  font-size: 0.58rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.model-module-loading {
+  display: grid;
+  place-items: center;
+}
+
+.model-module-loading span {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--cyan);
+}
+
+@media (max-width: 640px) {
+  .project-media-tabs button { flex: 1; }
+  .model-status-content { top: 42%; width: calc(100% - 2rem); left: 1rem; }
+  .model-status-content h4 { font-size: 0.98rem; }
+  .model-status-content p { font-size: 0.7rem; }
+
+  .model-status-hotspots {
+    right: 0.65rem;
+    bottom: 0.65rem;
+    left: 0.65rem;
+    width: auto;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .model-status-hotspots div { justify-content: center; }
+  .model-status-hotspots strong { display: none; }
+}

@@ -1,0 +1,64 @@
+.pc-card {
+  overflow: hidden;
+  border: 1px solid var(--border-accent);
+  border-radius: 4px;
+  background: var(--bg-surface) !important;
+}
+
+.pc-photo-frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #080c12;
+}
+
+.pc-photo-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(7, 10, 15, 0.72), transparent 38%);
+}
+
+.pc-avatar {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center 18%;
+}
+
+.pc-photo-index {
+  position: absolute;
+  z-index: 1;
+  left: 0.8rem;
+  bottom: 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--steel);
+}
+
+.pc-details {
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.pc-handle { font-family: var(--font-mono); font-size: 0.65rem; color: var(--cyan); }
+.pc-details h3 { margin: 0.35rem 0 0; font-size: 1.35rem; color: var(--text); }
+.pc-title { margin: 0.15rem 0 0; font-size: 0.8rem; color: var(--text-secondary); }
+.pc-status { margin: 0.4rem 0 0; font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-muted); }
+
+.pc-contact-btn {
+  width: 100%;
+  min-height: 42px;
+  margin-top: 1rem;
+  border: 1px solid var(--border-accent);
+  border-radius: 2px;
+  background: var(--bg-elevated);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.pc-contact-btn:hover { border-color: var(--cyan); color: var(--cyan); }
