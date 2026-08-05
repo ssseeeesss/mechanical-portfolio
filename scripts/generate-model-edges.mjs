@@ -40,10 +40,14 @@ function encodeMeshEdges(scene) {
     const size = rawSize.map((value) => (value > 0 ? value : 1));
     const positions = new Uint16Array(position ? position.count * 3 : 0);
 
-    for (let index = 0; index < positions.length; index += 1) {
-      const axis = index % 3;
-      const value = position.getComponent(index, axis);
-      positions[index] = Math.max(0, Math.min(65535, Math.round(((value - min[axis]) / size[axis]) * 65535)));
+    for (let vertexIndex = 0; vertexIndex < position.count; vertexIndex += 1) {
+      for (let axis = 0; axis < 3; axis += 1) {
+        const value = position.getComponent(vertexIndex, axis);
+        positions[vertexIndex * 3 + axis] = Math.max(
+          0,
+          Math.min(65535, Math.round(((value - min[axis]) / size[axis]) * 65535)),
+        );
+      }
     }
 
     records.push({ segmentCount, min, size, positions });

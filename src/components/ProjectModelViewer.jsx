@@ -117,10 +117,30 @@ function parseEdgeData(buffer) {
   return records;
 }
 
-function sampleEdgePositions(record, segmentLimit) {
+function sampleEdgePositions(record, segmentLimit, samplingMode = 'uniform') {
   if (record.segmentCount <= segmentLimit) return record.positions;
 
   const positions = new Uint16Array(segmentLimit * 6);
+  if (samplingMode === 'longest') {
+    const rankedSegments = Array.from({ length: record.segmentCount }, (_, segmentIndex) => {
+      const offset = segmentIndex * 6;
+      let lengthSquared = 0;
+
+      for (let axis = 0; axis < 3; axis += 1) {
+        const delta = (record.positions[offset + axis] - record.positions[offset + axis + 3]) * record.size[axis];
+        lengthSquared += delta * delta;
+      }
+
+      return { segmentIndex, lengthSquared };
+    });
+    rankedSegments.sort((a, b) => b.lengthSquared - a.lengthSquared);
+
+    rankedSegments.slice(0, segmentLimit).forEach(({ segmentIndex }, targetIndex) => {
+      positions.set(record.positions.subarray(segmentIndex * 6, segmentIndex * 6 + 6), targetIndex * 6);
+    });
+    return positions;
+  }
+
   for (let targetIndex = 0; targetIndex < segmentLimit; targetIndex += 1) {
     const sourceIndex = Math.min(
       record.segmentCount - 1,
@@ -131,7 +151,7 @@ function sampleEdgePositions(record, segmentLimit) {
   return positions;
 }
 
-function createEdgeOverlays(scene, records, segmentLimit) {
+function createEdgeOverlays(scene, records, segmentLimit, samplingMode) {
   const overlays = [];
   let meshIndex = 0;
 
@@ -143,7 +163,7 @@ function createEdgeOverlays(scene, records, segmentLimit) {
     if (!record.segmentCount) return;
 
     const geometry = new THREE.BufferGeometry();
-    const positions = sampleEdgePositions(record, segmentLimit);
+    const positions = sampleEdgePositions(record, segmentLimit, samplingMode);
     geometry.setAttribute('position', new THREE.Uint16BufferAttribute(positions, 3, true));
     const material = new THREE.LineBasicMaterial({
       color: EDGE_COLOR,
@@ -194,12 +214,14 @@ function ModelAsset({
   const { scene: sourceScene } = useGLTF(model.src);
   const edgeRecords = useModelEdgeData(model);
   const scene = useMemo(() => cloneSceneWithMaterials(sourceScene), [sourceScene]);
-  const edgeSegmentLimit = model.viewer?.performanceMode === 'heavy'
+  const defaultEdgeSegmentLimit = model.viewer?.performanceMode === 'heavy'
     ? MAX_EDGE_SEGMENTS_PER_HEAVY_MESH
     : MAX_EDGE_SEGMENTS_PER_MESH;
+  const edgeSegmentLimit = model.viewer?.edgeSegmentLimit ?? defaultEdgeSegmentLimit;
+  const edgeSamplingMode = model.viewer?.edgeSamplingMode ?? 'uniform';
   const edgeOverlays = useMemo(
-    () => createEdgeOverlays(scene, edgeRecords, edgeSegmentLimit),
-    [edgeRecords, edgeSegmentLimit, scene],
+    () => createEdgeOverlays(scene, edgeRecords, edgeSegmentLimit, edgeSamplingMode),
+    [edgeRecords, edgeSamplingMode, edgeSegmentLimit, scene],
   );
   const bounds = useBounds();
   const camera = useThree((state) => state.camera);
