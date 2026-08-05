@@ -7,6 +7,7 @@ import '../styles/shared.css';
 import './AwardsSection.css';
 
 const rankColors = ['#f5c451', '#b8c4d6', '#cc8f61', '#7f91aa'];
+const awardsWithImages = awards.filter((award) => award.image);
 
 export default function AwardsSection() {
   const [lightboxIdx, setLightboxIdx] = useState(null);
@@ -31,15 +32,21 @@ export default function AwardsSection() {
                   <span className="rank-label">AWARD</span>
                 </div>
 
-                <button
-                  className="award-cert"
-                  onClick={() => setLightboxIdx(index)}
-                  aria-label={`查看${award.title}证书`}
-                  type="button"
-                >
-                  <img src={award.image} alt="" className="award-cert-img" loading="lazy" decoding="async" />
-                  <span className="award-cert-overlay"><span className="cert-view">查看证书</span></span>
-                </button>
+                {award.image ? (
+                  <button
+                    className="award-cert"
+                    onClick={() => setLightboxIdx(awardsWithImages.indexOf(award))}
+                    aria-label={`查看${award.title}证书`}
+                    type="button"
+                  >
+                    <img src={award.image} alt="" className="award-cert-img" loading="lazy" decoding="async" />
+                    <span className="award-cert-overlay"><span className="cert-view">查看证书</span></span>
+                  </button>
+                ) : (
+                  <div className="award-cert award-cert-placeholder" role="img" aria-label={`${award.title}证书图片待补充`}>
+                    <span>证书图待补充</span>
+                  </div>
+                )}
 
                 <div className="award-info">
                   <h3 className="award-title">{award.title}</h3>
@@ -53,11 +60,11 @@ export default function AwardsSection() {
         </div>
       </div>
 
-      {lightboxIdx !== null && (
+      {lightboxIdx !== null && awardsWithImages[lightboxIdx] && (
         <ImageLightbox
-          images={awards.map((award) => award.image)}
+          images={awardsWithImages.map((award) => award.image)}
           activeIndex={lightboxIdx}
-          title={awards[lightboxIdx].title}
+          title={awardsWithImages[lightboxIdx].title}
           onClose={closeLightbox}
         />
       )}

@@ -2,9 +2,9 @@ const BASE = import.meta.env.BASE_URL;
 
 const awards = [
   {
-    title: '全国3D数字化创新设计大赛',
-    subtitle: '省级一等奖 · 3D Digital Innovation Design Competition · 1st Prize (Provincial)',
-    image: `${BASE}personal/3D大赛一等奖.jpg`,
+    title: '全国大学生机械创新设计大赛',
+    subtitle: '国家级三等奖 · National Mechanical Innovation Design Competition · 3rd Prize (National)',
+    image: null,
     rank: 1,
   },
   {
@@ -20,9 +20,9 @@ const awards = [
     rank: 3,
   },
   {
-    title: '智慧农业创新创业大赛',
-    subtitle: '省级三等奖 · Smart Agriculture Innovation · 3rd Prize (Provincial)',
-    image: `${BASE}personal/智慧农业三等奖.png`,
+    title: '全国3D数字化创新设计大赛',
+    subtitle: '省级一等奖 · 3D Digital Innovation Design Competition · 1st Prize (Provincial)',
+    image: `${BASE}personal/3D大赛一等奖.jpg`,
     rank: 4,
   },
 ];

@@ -11,7 +11,7 @@ export default function FooterSection() {
             <h2 id="contact-title">让结构设计真正服务于运动与交互</h2>
             <p>期待具身智能机械结构方向的项目交流、实习与校招机会。</p>
             <div className="footer-actions">
-              <a className="footer-action footer-action-primary" href="mailto:15196275183@163.com">发送邮件</a>
+              <a className="footer-action footer-action-primary" href="mailto:3064033560@qq.com">发送邮件</a>
               <a
                 className="footer-action"
                 href="https://github.com/ssseeeesss/mechanical-portfolio"

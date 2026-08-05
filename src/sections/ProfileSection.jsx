@@ -10,7 +10,7 @@ export default function ProfileSection() {
         <SectionHeader
           eyebrow="04 / EDUCATION & COLLABORATION"
           title="教育与协作背景"
-          subtitle="教育背景与机械创新协会项目协作经历。"
+          subtitle="教育背景、机械创新协会协作与具身智能设备工程实践。"
           titleId="profile-title"
         />
 
@@ -40,6 +40,8 @@ export default function ProfileSection() {
                 <ul className="detail-list">
                   <li>参与机械结构设计、配套程序开发、零件采购、实物装配和作品路演</li>
                   <li>多次参与竞赛项目申报、答辩与结题，积累项目统筹和跨专业协作经验</li>
+                  <li>在飞捷科思参与 UMI-H 外骨骼数据采集设备的结构设计、工程交付与样机验证</li>
+                  <li>具备机械类专利技术交底书撰写与专利代理协作经验</li>
                 </ul>
               </div>
             </article>

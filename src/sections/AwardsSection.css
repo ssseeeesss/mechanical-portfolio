@@ -35,6 +35,21 @@
   cursor: zoom-in;
 }
 
+.award-cert-placeholder {
+  display: grid;
+  place-items: center;
+  cursor: default;
+  background:
+    linear-gradient(rgba(47, 200, 242, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 200, 242, 0.12) 1px, transparent 1px),
+    #080c12;
+  background-size: 26px 26px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+}
+
 .award-cert-img { width: 100%; height: 100%; display: block; object-fit: contain; transition: transform 0.3s ease; }
 .award-card:hover .award-cert-img { transform: scale(1.025); }
 

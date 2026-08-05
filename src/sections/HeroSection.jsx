@@ -75,15 +75,15 @@ export default function HeroSection() {
         <div className="hero-identity">
           <p className="hero-eyebrow">EMBODIED INTELLIGENCE · MECHANICAL DESIGN</p>
           <h1 id="hero-title" className="hero-name">刘雨林</h1>
-          <p className="hero-role">求职方向 · 具身智能机械结构工程师</p>
+          <p className="hero-role">求职方向 · 机械工程师 / 机械结构工程师</p>
         </div>
 
         <div className="hero-details">
           <p className="hero-summary">
-            沈阳理工大学材料成型及控制工程专业本科生，求职方向为具身智能机械结构工程师。具备从功能需求分析、机构与传动方案设计、三维建模和电机选型，到工程图与 BOM 输出、外协加工及样机装调的项目实践；实习期间参与机器人结构方案迭代与驱动系统选型，并完成 Y1 轮足机器人 SolidWorks 模型向 URDF、ROS 仿真环境的转换。
+            沈阳理工大学材料成型及控制工程专业本科生，求职方向为机械工程师 / 机械结构工程师。具备从功能需求分析、机构与传动方案设计、三维建模和电机选型，到工程图与 BOM 输出、外协加工及样机装调的项目实践；实习期间参与机器人结构方案迭代、驱动系统选型和数据采集设备工程化交付，并完成 Y1 轮足机器人 SolidWorks 模型向 URDF、ROS 仿真环境的转换。
           </p>
           <p className="hero-summary">
-            曾主导多功能杀鱼机整机与传动系统开发，独立完成 CoreXY 智能分类装置机械系统设计；关注人形机器人、轮足机器人、灵巧手与外骨骼设备的机构设计和工程落地，习惯结合负载、转速、装配空间及加工条件评估结构方案。
+            曾主导多功能杀鱼机整机与传动系统开发，独立完成 CoreXY 智能分类装置机械系统设计；在飞捷科思参与 UMI-H 无本体化数据采集设备和外骨骼手套结构开发，关注人形机器人、灵巧手与穿戴式设备的机构设计、轻量化和工程落地。
           </p>
 
           <div className="hero-education" aria-label="教育信息">
@@ -99,7 +99,7 @@ export default function HeroSection() {
             </div>
             <div className="hero-public-info-wide">
               <span>邮箱</span>
-              <a href="mailto:15196275183@163.com">15196275183@163.com</a>
+              <a href="mailto:3064033560@qq.com">3064033560@qq.com</a>
             </div>
             <div>
               <span>GitHub</span>

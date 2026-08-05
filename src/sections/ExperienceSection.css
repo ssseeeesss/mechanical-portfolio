@@ -7,6 +7,10 @@
   border-bottom: 1px solid var(--border);
 }
 
+.experience-record + .experience-record {
+  margin-top: 3rem;
+}
+
 .experience-position {
   padding: 1.5rem 0;
   display: flex;
