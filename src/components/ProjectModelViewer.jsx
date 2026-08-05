@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import * as THREE from 'three';
-import { Canvas, useLoader, useThree } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
 import { Bounds, OrbitControls, useBounds, useGLTF, useProgress } from '@react-three/drei';
 import useMediaQuery from '../hooks/useMediaQuery';
 import './ProjectModelViewer.css';
@@ -40,16 +40,16 @@ class ModelErrorBoundary extends Component {
   }
 }
 
-function LoadingOverlay({ poster }) {
+function LoadingOverlay({ poster, ready }) {
   const { active, progress } = useProgress();
-  if (!active && progress >= 100) return null;
+  if (ready) return null;
 
   return (
     <div className="model-loading-overlay" role="status" aria-live="polite">
       <img src={poster} alt="" />
       <div>
         <span>LOADING MODEL</span>
-        <strong>{Math.round(progress)}%</strong>
+        <strong>{active ? `${Math.round(progress)}%` : '0%'}</strong>
       </div>
     </div>
   );
@@ -190,16 +190,13 @@ function createEdgeOverlays(scene, records, segmentLimit, samplingMode) {
   return overlays;
 }
 
-function getEdgeSource(model) {
-  if (model.edgeSrc) return model.edgeSrc;
-  return model.src.replace(/\.glb$/i, '.edges');
+function getModelSource(model) {
+  return model.viewerSrc ?? model.src;
 }
 
-function useModelEdgeData(model) {
-  const edgeBuffer = useLoader(THREE.FileLoader, getEdgeSource(model), (loader) => {
-    loader.setResponseType('arraybuffer');
-  });
-  return useMemo(() => parseEdgeData(edgeBuffer), [edgeBuffer]);
+function getEdgeSource(model) {
+  if (model.edgeSrc) return model.edgeSrc;
+  return getModelSource(model).replace(/\.glb$/i, '.edges');
 }
 
 function ModelAsset({
@@ -210,19 +207,17 @@ function ModelAsset({
   selectedPartId,
   onSelectPart,
   onPartsReady,
+  onModelReady,
 }) {
-  const { scene: sourceScene } = useGLTF(model.src);
-  const edgeRecords = useModelEdgeData(model);
+  const { scene: sourceScene } = useGLTF(getModelSource(model));
   const scene = useMemo(() => cloneSceneWithMaterials(sourceScene), [sourceScene]);
   const defaultEdgeSegmentLimit = model.viewer?.performanceMode === 'heavy'
     ? MAX_EDGE_SEGMENTS_PER_HEAVY_MESH
     : MAX_EDGE_SEGMENTS_PER_MESH;
   const edgeSegmentLimit = model.viewer?.edgeSegmentLimit ?? defaultEdgeSegmentLimit;
   const edgeSamplingMode = model.viewer?.edgeSamplingMode ?? 'uniform';
-  const edgeOverlays = useMemo(
-    () => createEdgeOverlays(scene, edgeRecords, edgeSegmentLimit, edgeSamplingMode),
-    [edgeRecords, edgeSamplingMode, edgeSegmentLimit, scene],
-  );
+  const edgeSource = getEdgeSource(model);
+  const [edgeOverlays, setEdgeOverlays] = useState([]);
   const bounds = useBounds();
   const camera = useThree((state) => state.camera);
   const invalidate = useThree((state) => state.invalidate);
@@ -256,13 +251,34 @@ function ModelAsset({
     onPartsReady(parts);
   }, [onPartsReady, parts]);
 
-  useEffect(() => () => {
-    edgeOverlays.forEach((overlay) => {
-      overlay.removeFromParent();
-      overlay.geometry.dispose();
-      overlay.material.dispose();
-    });
-  }, [edgeOverlays]);
+  useEffect(() => {
+    const controller = new AbortController();
+    let loadedOverlays = [];
+
+    async function loadEdges() {
+      try {
+        const response = await fetch(edgeSource, { cache: 'force-cache', signal: controller.signal });
+        if (!response.ok) throw new Error(`Edge request failed with ${response.status}`);
+        const records = parseEdgeData(await response.arrayBuffer());
+        if (controller.signal.aborted) return;
+        loadedOverlays = createEdgeOverlays(scene, records, edgeSegmentLimit, edgeSamplingMode);
+        setEdgeOverlays(loadedOverlays);
+        invalidate();
+      } catch (error) {
+        if (error.name !== 'AbortError') console.warn('Model edge overlay failed to load', error);
+      }
+    }
+
+    loadEdges();
+    return () => {
+      controller.abort();
+      loadedOverlays.forEach((overlay) => {
+        overlay.removeFromParent();
+        overlay.geometry.dispose();
+        overlay.material.dispose();
+      });
+    };
+  }, [edgeSamplingMode, edgeSegmentLimit, edgeSource, invalidate, scene]);
 
   const fitPresetView = useCallback(() => {
     if (!viewDirection || viewDirection.length !== 3) return false;
@@ -298,9 +314,10 @@ function ModelAsset({
         bounds.refresh(scene).clip().fit();
         controlsRef.current?.saveState();
       }
+      onModelReady();
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [bounds, controlsRef, fitPresetView, scene]);
+  }, [bounds, controlsRef, fitPresetView, onModelReady, scene]);
 
   useEffect(() => {
     if (resetSignal === 0) return;
@@ -331,7 +348,7 @@ function ModelAsset({
         material.needsUpdate = true;
       });
     });
-  }, [scene, selectedPartId]);
+  }, [edgeOverlays, scene, selectedPartId]);
 
   useEffect(() => {
     const axis = AXIS_INDEX[clipping.axis];
@@ -352,7 +369,7 @@ function ModelAsset({
         material.needsUpdate = true;
       });
     });
-  }, [clipping, modelBounds, scene]);
+  }, [clipping, edgeOverlays, modelBounds, scene]);
 
   const handleDoubleClick = useCallback((event) => {
     event.stopPropagation();
@@ -374,8 +391,10 @@ function ModelViewport({ model, projectTitle }) {
   const [selectedPartId, setSelectedPartId] = useState(null);
   const [parts, setParts] = useState([]);
   const [partsPanelOpen, setPartsPanelOpen] = useState(false);
+  const [modelReady, setModelReady] = useState(false);
 
   const onPartsReady = useCallback((nextParts) => setParts(nextParts), []);
+  const onModelReady = useCallback(() => setModelReady(true), []);
   const onSelectPart = useCallback((partId) => {
     setSelectedPartId((current) => (current === partId ? null : partId));
     setPartsPanelOpen(true);
@@ -439,6 +458,7 @@ function ModelViewport({ model, projectTitle }) {
                 selectedPartId={selectedPartId}
                 onSelectPart={onSelectPart}
                 onPartsReady={onPartsReady}
+                onModelReady={onModelReady}
               />
             </Bounds>
           </Suspense>
@@ -466,7 +486,7 @@ function ModelViewport({ model, projectTitle }) {
             maxPolarAngle={Math.PI * 0.92}
           />
         </Canvas>
-        <LoadingOverlay poster={model.poster} />
+        <LoadingOverlay poster={model.poster} ready={modelReady} />
 
         <div className="model-viewer-toolbar" aria-label="三维模型控制">
           <button type="button" onClick={handleResetView}>复位视角</button>
@@ -639,16 +659,17 @@ function ModelDialog({ children, projectTitle, onClose }) {
 
 export default function ProjectModelViewer({ model, projectTitle, accent, onClose }) {
   const [retryKey, setRetryKey] = useState(0);
+  const modelSource = getModelSource(model);
   const retry = useCallback(() => {
-    useGLTF.clear(model.src);
+    useGLTF.clear(modelSource);
     setRetryKey((value) => value + 1);
-  }, [model.src]);
+  }, [modelSource]);
 
   return (
     <ModelDialog projectTitle={projectTitle} onClose={onClose}>
       <div style={{ '--model-accent': accent }} className="model-viewer-root">
         <ModelErrorBoundary
-          key={`${model.src}-${retryKey}`}
+          key={`${modelSource}-${retryKey}`}
           fallback={<ModelFailure model={model} onRetry={retry} />}
         >
           <ModelViewport model={model} projectTitle={projectTitle} />

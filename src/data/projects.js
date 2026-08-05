@@ -23,6 +23,7 @@ const projects = [
     model: {
       status: 'ready',
       src: `${BASE}models/UMI-H.glb`,
+      viewerSrc: `${BASE}models/viewer/UMI-H.glb`,
       fileName: 'UMI-H.glb',
       alt: 'UMI-H 无本体化数据采集设备轻量化外骨骼三维模型',
       viewer: {
@@ -68,6 +69,7 @@ const projects = [
     model: {
       status: 'ready',
       src: `${BASE}models/A-杀鱼机.glb`,
+      viewerSrc: `${BASE}models/viewer/A-杀鱼机.glb`,
       fileName: 'A-杀鱼机.glb',
       poster: `${BASE}projects/fish/ebfc820caac058d5884a6602540cfb6b.png`,
       alt: '多功能杀鱼机三维模型三分之四整机视图',
@@ -120,6 +122,7 @@ const projects = [
     model: {
       status: 'ready',
       src: `${BASE}models/垃圾桶.glb`,
+      viewerSrc: `${BASE}models/viewer/垃圾桶.glb`,
       fileName: '垃圾桶.glb',
       poster: `${BASE}projects/gantry/e912a48ee8b90c7a947f20bf286d825a.jpg`,
       alt: '龙门架智能分类垃圾桶三维模型整机视图',
@@ -150,6 +153,7 @@ const projects = [
     model: {
       status: 'ready',
       src: `${BASE}models/CCTV管道检测车.glb`,
+      viewerSrc: `${BASE}models/viewer/CCTV管道检测车.glb`,
       fileName: 'CCTV管道检测车.glb',
       poster: `${BASE}projects/cctv/fc1542d00ac91419fe096f0dab7092cc.png`,
       alt: 'CCTV 管道检测机器人三维模型整机视图',
@@ -190,6 +194,7 @@ const projects = [
     model: {
       status: 'ready',
       src: `${BASE}models/工训小车.glb`,
+      viewerSrc: `${BASE}models/viewer/工训小车.glb`,
       fileName: '工训小车.glb',
       poster: `${BASE}projects/logistics/cdd854837a41e9fab034e6b6b09cbe68.jpg`,
       alt: '全向物流车三维模型整机视图',

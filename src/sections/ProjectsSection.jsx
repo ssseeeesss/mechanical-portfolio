@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import FadeContent from '../components/FadeContent';
 import SectionHeader from '../components/SectionHeader';
 import ProjectMedia from '../components/ProjectMedia';
@@ -7,7 +7,8 @@ import projects from '../data/projects';
 import '../styles/shared.css';
 import './ProjectsSection.css';
 
-const ProjectModelViewer = lazy(() => import('../components/ProjectModelViewer'));
+const loadProjectModelViewer = () => import('../components/ProjectModelViewer');
+const ProjectModelViewer = lazy(loadProjectModelViewer);
 
 function ProjectCard({ project, index, isEven, onImageClick, onOpenModel }) {
   return (
@@ -90,8 +91,23 @@ function ProjectCard({ project, index, isEven, onImageClick, onOpenModel }) {
 }
 
 export default function ProjectsSection() {
+  const sectionRef = useRef(null);
   const [lightbox, setLightbox] = useState({ projectIdx: null, imageIdx: null });
   const [modelProject, setModelProject] = useState(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || navigator.connection?.saveData || !('IntersectionObserver' in window)) return undefined;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      loadProjectModelViewer();
+      observer.disconnect();
+    }, { rootMargin: '320px 0px' });
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   const openLightbox = useCallback((projectIdx, imageIdx) => {
     setLightbox({ projectIdx, imageIdx });
@@ -111,7 +127,7 @@ export default function ProjectsSection() {
   const activeProject = lightbox.projectIdx !== null ? projects[lightbox.projectIdx] : null;
 
   return (
-    <section id="projects" className="projects section-base" aria-labelledby="projects-title">
+    <section ref={sectionRef} id="projects" className="projects section-base" aria-labelledby="projects-title">
       <div className="section-inner">
         <SectionHeader
           eyebrow="02 / SELECTED ENGINEERING WORK"
