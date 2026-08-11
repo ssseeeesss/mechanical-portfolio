@@ -8,9 +8,15 @@ import '../styles/shared.css';
 import './ProjectsSection.css';
 
 const loadProjectModelViewer = () => import('../components/ProjectModelViewer');
+const loadProjectModelPreload = () => import('../utils/projectModelPreload');
 const ProjectModelViewer = lazy(loadProjectModelViewer);
 
-function ProjectCard({ project, index, isEven, onImageClick, onOpenModel }) {
+function allowsModelPreload() {
+  const connection = navigator.connection;
+  return !connection?.saveData && !['slow-2g', '2g'].includes(connection?.effectiveType);
+}
+
+function ProjectCard({ project, index, isEven, onImageClick, onOpenModel, onPreloadModel }) {
   return (
     <FadeContent threshold={0.08} duration={0.65} delay={index * 0.08}>
       <article className={`pcard ${isEven ? 'pcard-even' : ''}`} aria-labelledby={`project-${project.id}`}>
@@ -50,6 +56,9 @@ function ProjectCard({ project, index, isEven, onImageClick, onOpenModel }) {
                   type="button"
                   className="pcard-model-launch"
                   onClick={() => onOpenModel(project)}
+                  onPointerEnter={() => onPreloadModel(project)}
+                  onFocus={() => onPreloadModel(project)}
+                  onTouchStart={() => onPreloadModel(project)}
                 >
                   <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <path d="M12 3 4.5 7.25v8.5L12 20l7.5-4.25v-8.5L12 3Z" />
@@ -95,19 +104,55 @@ export default function ProjectsSection() {
   const [lightbox, setLightbox] = useState({ projectIdx: null, imageIdx: null });
   const [modelProject, setModelProject] = useState(null);
 
+  const warmModel = useCallback((project) => {
+    if (!project.model?.src || !allowsModelPreload()) return;
+
+    Promise.all([loadProjectModelViewer(), loadProjectModelPreload()])
+      .then(([, { preloadProjectModel }]) => preloadProjectModel(project.model))
+      .catch(() => undefined);
+  }, []);
+
+  useEffect(() => {
+    if (!allowsModelPreload()) return undefined;
+
+    let cancelled = false;
+    let idleId;
+    let timeoutId;
+    const warmFirstModel = () => {
+      if (!cancelled) warmModel(projects[0]);
+    };
+    const scheduleWarmup = () => {
+      if ('requestIdleCallback' in window) {
+        idleId = window.requestIdleCallback(warmFirstModel, { timeout: 4000 });
+      } else {
+        timeoutId = window.setTimeout(warmFirstModel, 1800);
+      }
+    };
+
+    if (document.readyState === 'complete') scheduleWarmup();
+    else window.addEventListener('load', scheduleWarmup, { once: true });
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener('load', scheduleWarmup);
+      if (idleId !== undefined) window.cancelIdleCallback(idleId);
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+    };
+  }, [warmModel]);
+
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section || navigator.connection?.saveData || !('IntersectionObserver' in window)) return undefined;
+    if (!section || !allowsModelPreload() || !('IntersectionObserver' in window)) return undefined;
 
     const observer = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
-      loadProjectModelViewer();
+      warmModel(projects[0]);
       observer.disconnect();
-    }, { rootMargin: '320px 0px' });
+    }, { rootMargin: '900px 0px' });
 
     observer.observe(section);
     return () => observer.disconnect();
-  }, []);
+  }, [warmModel]);
 
   const openLightbox = useCallback((projectIdx, imageIdx) => {
     setLightbox({ projectIdx, imageIdx });
@@ -121,7 +166,10 @@ export default function ProjectsSection() {
     }
   }, []);
 
-  const openModel = useCallback((project) => setModelProject(project), []);
+  const openModel = useCallback((project) => {
+    warmModel(project);
+    setModelProject(project);
+  }, [warmModel]);
   const closeModel = useCallback(() => setModelProject(null), []);
 
   const activeProject = lightbox.projectIdx !== null ? projects[lightbox.projectIdx] : null;
@@ -145,6 +193,7 @@ export default function ProjectsSection() {
               isEven={index % 2 === 1}
               onImageClick={openLightbox}
               onOpenModel={openModel}
+              onPreloadModel={warmModel}
             />
           ))}
         </div>

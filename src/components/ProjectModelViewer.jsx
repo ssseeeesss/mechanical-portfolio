@@ -13,6 +13,7 @@ import * as THREE from 'three';
 import { Canvas, useThree } from '@react-three/fiber';
 import { Bounds, OrbitControls, useBounds, useGLTF, useProgress } from '@react-three/drei';
 import useMediaQuery from '../hooks/useMediaQuery';
+import { getProjectModelSource } from '../utils/projectModelPreload';
 import './ProjectModelViewer.css';
 
 const AXIS_INDEX = { x: 0, y: 1, z: 2 };
@@ -190,13 +191,9 @@ function createEdgeOverlays(scene, records, segmentLimit, samplingMode) {
   return overlays;
 }
 
-function getModelSource(model) {
-  return model.viewerSrc ?? model.src;
-}
-
 function getEdgeSource(model) {
   if (model.edgeSrc) return model.edgeSrc;
-  return getModelSource(model).replace(/\.glb$/i, '.edges');
+  return getProjectModelSource(model).replace(/\.glb$/i, '.edges');
 }
 
 function ModelAsset({
@@ -209,7 +206,7 @@ function ModelAsset({
   onPartsReady,
   onModelReady,
 }) {
-  const { scene: sourceScene } = useGLTF(getModelSource(model));
+  const { scene: sourceScene } = useGLTF(getProjectModelSource(model));
   const scene = useMemo(() => cloneSceneWithMaterials(sourceScene), [sourceScene]);
   const defaultEdgeSegmentLimit = model.viewer?.performanceMode === 'heavy'
     ? MAX_EDGE_SEGMENTS_PER_HEAVY_MESH
@@ -659,7 +656,7 @@ function ModelDialog({ children, projectTitle, onClose }) {
 
 export default function ProjectModelViewer({ model, projectTitle, accent, onClose }) {
   const [retryKey, setRetryKey] = useState(0);
-  const modelSource = getModelSource(model);
+  const modelSource = getProjectModelSource(model);
   const retry = useCallback(() => {
     useGLTF.clear(modelSource);
     setRetryKey((value) => value + 1);
