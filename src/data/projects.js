@@ -55,7 +55,10 @@ const projects = [
     ],
     result: '完成六自由度与全尺寸两类外骨骼遥操手套从概念方案、参数化产品设计和运动仿真，到样件验证、工程出图、机加工对接与装配落地的完整机械开发流程。',
     highlights: ['六自由度 / 全尺寸', '四连杆随动机构', '参数化产品设计', '有限元 / 拓扑优化', '工程落地'],
-    images: [],
+    images: [
+      `${BASE}projects/g1/196cd8b772f7761a6f4e05ebc3657f2e.png`,
+      `${BASE}projects/g1/3c8060a56b41818f9b100210d28d3a62.png`,
+    ],
     mediaNote: '项目图片暂未公开，可打开 3D 查看器浏览六自由度外骨骼手套模型',
     model: {
       status: 'ready',
