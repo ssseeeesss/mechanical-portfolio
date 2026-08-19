@@ -25,7 +25,7 @@ const projects = [
       status: 'ready',
       src: `${BASE}models/UMI-H.glb`,
       viewerSrc: `${BASE}models/viewer/UMI-H.glb`,
-      fileName: 'UMI-H.glb',
+      fileName: '外骨骼数据采集装置.glb',
       alt: 'UMI-H 无本体化数据采集设备轻量化外骨骼三维模型',
       viewer: {
         performanceMode: 'heavy',
