@@ -93,8 +93,12 @@ const projects = [
     ],
     result: '完成轮腿连接构件轻量化迭代、URDF / ROS 仿真环境部署及整机密封结构方案，并配合算法团队推进样机仿真验证与零部件采购落地。',
     highlights: ['Fusion 360 生成式设计', 'URDF / ROS', '质心 / 惯性矩', '静密封 / 动密封', '整机孔位优化'],
-    images: [],
-    mediaNote: '项目图片与三维模型暂未公开',
+    images: [
+      `${BASE}projects/y1/3284b9e95383b832e867a83cf2682780.png`,
+      `${BASE}projects/y1/3c94c21226109bde202338ef23377442.png`,
+      `${BASE}projects/y1/ae916ab8f341f3616c3c3b18d7d4f065.png`,
+    ],
+    mediaNote: 'Y1 轮足机器狗整机与结构细节图片',
     color: '#8fb3c9',
   },
   {
