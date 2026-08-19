@@ -39,6 +39,7 @@
 .pcard-topline { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
 
 .pcard-badge,
+.pcard-type,
 .pcard-featured {
   display: inline-flex;
   align-items: center;
@@ -49,6 +50,9 @@
 }
 
 .pcard-badge { border: 1px solid; }
+.pcard-type { border: 1px solid currentColor; font-weight: 700; white-space: nowrap; }
+.pcard-type-internship { color: var(--cyan); background: rgba(50, 197, 233, 0.08); }
+.pcard-type-competition { color: var(--orange); background: rgba(255, 107, 69, 0.08); }
 .pcard-featured { background: var(--cyan); color: #051016; font-weight: 700; }
 
 .pcard-title {

@@ -11,6 +11,11 @@ const loadProjectModelViewer = () => import('../components/ProjectModelViewer');
 const loadProjectModelPreload = () => import('../utils/projectModelPreload');
 const ProjectModelViewer = lazy(loadProjectModelViewer);
 
+const PROJECT_TYPE_LABELS = {
+  internship: '实习项目',
+  competition: '竞赛项目',
+};
+
 function allowsModelPreload() {
   const connection = navigator.connection;
   return !connection?.saveData && !['slow-2g', '2g'].includes(connection?.effectiveType);
@@ -38,6 +43,11 @@ function ProjectCard({ project, index, isEven, onImageClick, onOpenModel, onPrel
               <span className="pcard-badge" style={{ color: project.color, borderColor: project.color }}>
                 {project.category}
               </span>
+              {PROJECT_TYPE_LABELS[project.projectType] && (
+                <span className={`pcard-type pcard-type-${project.projectType}`}>
+                  {PROJECT_TYPE_LABELS[project.projectType]}
+                </span>
+              )}
               {project.featured && <span className="pcard-featured">重点项目</span>}
             </div>
 
