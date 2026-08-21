@@ -102,6 +102,19 @@ const projects = [
       `${BASE}projects/y1/1fe29c5ab040b9a656f641ec41073e86.jpg`,
     ],
     mediaNote: 'Y1 轮足机器狗整机与结构细节图片',
+    model: {
+      status: 'ready',
+      src: `${BASE}models/Y1.glb`,
+      viewerSrc: `${BASE}models/viewer/Y1.glb`,
+      fileName: 'FS-GC-3.25.stp.glb',
+      downloadEnabled: false,
+      alt: 'Y1 轮足机器狗三维模型',
+      viewer: {
+        performanceMode: 'heavy',
+        rotateSpeed: 0.78,
+        dampingFactor: 0.14,
+      },
+    },
     color: '#8fb3c9',
   },
   {
