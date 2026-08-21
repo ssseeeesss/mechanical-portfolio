@@ -26,6 +26,7 @@ const projects = [
       src: `${BASE}models/UMI-H.glb`,
       viewerSrc: `${BASE}models/viewer/UMI-H.glb`,
       fileName: '外骨骼数据采集装置.glb',
+      downloadEnabled: false,
       alt: 'UMI-H 无本体化数据采集设备轻量化外骨骼三维模型',
       viewer: {
         performanceMode: 'heavy',
@@ -63,6 +64,7 @@ const projects = [
       src: `${BASE}models/六自由度外骨骼手套.glb`,
       viewerSrc: `${BASE}models/viewer/六自由度外骨骼手套.glb`,
       fileName: '六自由度外骨骼手套.glb',
+      downloadEnabled: false,
       alt: 'G1 六自由度外骨骼遥操穿戴手套三维模型',
       viewer: {
         performanceMode: 'heavy',

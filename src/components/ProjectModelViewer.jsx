@@ -335,7 +335,9 @@ function ModelViewport({ model, projectTitle }) {
           >
             {clipping.enabled ? '关闭剖视' : '开启剖视'}
           </button>
-          <a href={model.src} download={model.fileName} className="model-download-link">下载 GLB</a>
+          {model.downloadEnabled !== false && (
+            <a href={model.src} download={model.fileName} className="model-download-link">下载 GLB</a>
+          )}
         </div>
       </div>
 
