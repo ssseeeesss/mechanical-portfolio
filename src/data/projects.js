@@ -29,8 +29,6 @@ const projects = [
       alt: 'UMI-H 无本体化数据采集设备轻量化外骨骼三维模型',
       viewer: {
         performanceMode: 'heavy',
-        edgeSegmentLimit: 320,
-        edgeSamplingMode: 'longest',
         rotateSpeed: 0.78,
         dampingFactor: 0.14,
       },
@@ -68,8 +66,6 @@ const projects = [
       alt: 'G1 六自由度外骨骼遥操穿戴手套三维模型',
       viewer: {
         performanceMode: 'heavy',
-        edgeSegmentLimit: 320,
-        edgeSamplingMode: 'longest',
         rotateSpeed: 0.78,
         dampingFactor: 0.14,
       },

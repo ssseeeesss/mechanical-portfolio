@@ -17,13 +17,6 @@ import { getProjectModelSource } from '../utils/projectModelPreload';
 import './ProjectModelViewer.css';
 
 const AXIS_INDEX = { x: 0, y: 1, z: 2 };
-const EDGE_COLOR = 0x17262d;
-const EDGE_FILE_MAGIC = [0x50, 0x45, 0x44, 0x47];
-const EDGE_FILE_VERSION = 1;
-const EDGE_FILE_HEADER_BYTES = 8;
-const EDGE_RECORD_HEADER_BYTES = 32;
-const MAX_EDGE_SEGMENTS_PER_MESH = 2000;
-const MAX_EDGE_SEGMENTS_PER_HEAVY_MESH = 1400;
 
 class ModelErrorBoundary extends Component {
   constructor(props) {
@@ -83,119 +76,6 @@ function cloneSceneWithMaterials(source) {
   return scene;
 }
 
-function parseEdgeData(buffer) {
-  const view = new DataView(buffer);
-  if (buffer.byteLength < EDGE_FILE_HEADER_BYTES || !EDGE_FILE_MAGIC.every((value, index) => view.getUint8(index) === value)) {
-    throw new Error('Invalid model edge data');
-  }
-  if (view.getUint16(4, true) !== EDGE_FILE_VERSION) throw new Error('Unsupported model edge data version');
-
-  const meshCount = view.getUint16(6, true);
-  const records = new Array(meshCount);
-  let offset = EDGE_FILE_HEADER_BYTES;
-  for (let recordIndex = 0; recordIndex < meshCount; recordIndex += 1) {
-    if (offset + EDGE_RECORD_HEADER_BYTES > buffer.byteLength) throw new Error('Truncated model edge data');
-    const meshIndex = view.getUint16(offset, true);
-    const segmentCount = view.getUint32(offset + 4, true);
-    const min = [
-      view.getFloat32(offset + 8, true),
-      view.getFloat32(offset + 12, true),
-      view.getFloat32(offset + 16, true),
-    ];
-    const size = [
-      view.getFloat32(offset + 20, true),
-      view.getFloat32(offset + 24, true),
-      view.getFloat32(offset + 28, true),
-    ];
-    const positionCount = segmentCount * 6;
-    const positionBytes = positionCount * Uint16Array.BYTES_PER_ELEMENT;
-    const positionOffset = offset + EDGE_RECORD_HEADER_BYTES;
-    if (meshIndex >= meshCount || positionOffset + positionBytes > buffer.byteLength) throw new Error('Invalid model edge record');
-    records[meshIndex] = { segmentCount, min, size, positions: new Uint16Array(buffer, positionOffset, positionCount) };
-    offset += EDGE_RECORD_HEADER_BYTES + positionBytes;
-  }
-  if (records.some((record) => !record)) throw new Error('Incomplete model edge data');
-  return records;
-}
-
-function sampleEdgePositions(record, segmentLimit, samplingMode = 'uniform') {
-  if (record.segmentCount <= segmentLimit) return record.positions;
-
-  const positions = new Uint16Array(segmentLimit * 6);
-  if (samplingMode === 'longest') {
-    const rankedSegments = Array.from({ length: record.segmentCount }, (_, segmentIndex) => {
-      const offset = segmentIndex * 6;
-      let lengthSquared = 0;
-
-      for (let axis = 0; axis < 3; axis += 1) {
-        const delta = (record.positions[offset + axis] - record.positions[offset + axis + 3]) * record.size[axis];
-        lengthSquared += delta * delta;
-      }
-
-      return { segmentIndex, lengthSquared };
-    });
-    rankedSegments.sort((a, b) => b.lengthSquared - a.lengthSquared);
-
-    rankedSegments.slice(0, segmentLimit).forEach(({ segmentIndex }, targetIndex) => {
-      positions.set(record.positions.subarray(segmentIndex * 6, segmentIndex * 6 + 6), targetIndex * 6);
-    });
-    return positions;
-  }
-
-  for (let targetIndex = 0; targetIndex < segmentLimit; targetIndex += 1) {
-    const sourceIndex = Math.min(
-      record.segmentCount - 1,
-      Math.floor((targetIndex * record.segmentCount) / segmentLimit),
-    );
-    positions.set(record.positions.subarray(sourceIndex * 6, sourceIndex * 6 + 6), targetIndex * 6);
-  }
-  return positions;
-}
-
-function createEdgeOverlays(scene, records, segmentLimit, samplingMode) {
-  const overlays = [];
-  let meshIndex = 0;
-
-  scene.traverse((mesh) => {
-    if (!mesh.isMesh) return;
-    const record = records[meshIndex];
-    if (!record) throw new Error(`Missing edge data for mesh ${meshIndex}`);
-    meshIndex += 1;
-    if (!record.segmentCount) return;
-
-    const geometry = new THREE.BufferGeometry();
-    const positions = sampleEdgePositions(record, segmentLimit, samplingMode);
-    geometry.setAttribute('position', new THREE.Uint16BufferAttribute(positions, 3, true));
-    const material = new THREE.LineBasicMaterial({
-      color: EDGE_COLOR,
-      depthWrite: false,
-      opacity: 0.78,
-      polygonOffset: true,
-      polygonOffsetFactor: -1,
-      polygonOffsetUnits: -1,
-      transparent: true,
-    });
-    const overlay = new THREE.LineSegments(geometry, material);
-    overlay.name = `${mesh.name || 'mesh'}-edge-overlay`;
-    overlay.position.fromArray(record.min);
-    overlay.scale.fromArray(record.size);
-    overlay.renderOrder = 3;
-    overlay.raycast = () => null;
-    overlay.userData.portfolioEdgeOverlay = true;
-    overlay.userData.portfolioPartId = mesh.userData.portfolioPartId;
-    mesh.add(overlay);
-    overlays.push(overlay);
-  });
-
-  if (meshIndex !== records.length) throw new Error('Model edge data does not match mesh count');
-  return overlays;
-}
-
-function getEdgeSource(model) {
-  if (model.edgeSrc) return model.edgeSrc;
-  return getProjectModelSource(model).replace(/\.glb$/i, '.edges');
-}
-
 function ModelAsset({
   model,
   controlsRef,
@@ -208,13 +88,6 @@ function ModelAsset({
 }) {
   const { scene: sourceScene } = useGLTF(getProjectModelSource(model));
   const scene = useMemo(() => cloneSceneWithMaterials(sourceScene), [sourceScene]);
-  const defaultEdgeSegmentLimit = model.viewer?.performanceMode === 'heavy'
-    ? MAX_EDGE_SEGMENTS_PER_HEAVY_MESH
-    : MAX_EDGE_SEGMENTS_PER_MESH;
-  const edgeSegmentLimit = model.viewer?.edgeSegmentLimit ?? defaultEdgeSegmentLimit;
-  const edgeSamplingMode = model.viewer?.edgeSamplingMode ?? 'uniform';
-  const edgeSource = getEdgeSource(model);
-  const [edgeOverlays, setEdgeOverlays] = useState([]);
   const bounds = useBounds();
   const camera = useThree((state) => state.camera);
   const invalidate = useThree((state) => state.invalidate);
@@ -235,9 +108,6 @@ function ModelAsset({
       index += 1;
       const id = `part-${index}`;
       node.userData.portfolioPartId = id;
-      node.children.forEach((child) => {
-        if (child.userData.portfolioEdgeOverlay) child.userData.portfolioPartId = id;
-      });
       result.push({ id, label: `Node ${String(index).padStart(2, '0')}` });
     });
 
@@ -247,35 +117,6 @@ function ModelAsset({
   useEffect(() => {
     onPartsReady(parts);
   }, [onPartsReady, parts]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    let loadedOverlays = [];
-
-    async function loadEdges() {
-      try {
-        const response = await fetch(edgeSource, { cache: 'force-cache', signal: controller.signal });
-        if (!response.ok) throw new Error(`Edge request failed with ${response.status}`);
-        const records = parseEdgeData(await response.arrayBuffer());
-        if (controller.signal.aborted) return;
-        loadedOverlays = createEdgeOverlays(scene, records, edgeSegmentLimit, edgeSamplingMode);
-        setEdgeOverlays(loadedOverlays);
-        invalidate();
-      } catch (error) {
-        if (error.name !== 'AbortError') console.warn('Model edge overlay failed to load', error);
-      }
-    }
-
-    loadEdges();
-    return () => {
-      controller.abort();
-      loadedOverlays.forEach((overlay) => {
-        overlay.removeFromParent();
-        overlay.geometry.dispose();
-        overlay.material.dispose();
-      });
-    };
-  }, [edgeSamplingMode, edgeSegmentLimit, edgeSource, invalidate, scene]);
 
   const fitPresetView = useCallback(() => {
     if (!viewDirection || viewDirection.length !== 3) return false;
@@ -325,7 +166,7 @@ function ModelAsset({
 
   useEffect(() => {
     scene.traverse((node) => {
-      if ((!node.isMesh && !node.userData.portfolioEdgeOverlay) || !node.material) return;
+      if (!node.isMesh || !node.material) return;
       const materials = Array.isArray(node.material) ? node.material : [node.material];
       const isSelected = !selectedPartId || node.userData.portfolioPartId === selectedPartId;
 
@@ -345,7 +186,7 @@ function ModelAsset({
         material.needsUpdate = true;
       });
     });
-  }, [edgeOverlays, scene, selectedPartId]);
+  }, [scene, selectedPartId]);
 
   useEffect(() => {
     const axis = AXIS_INDEX[clipping.axis];
@@ -358,7 +199,7 @@ function ModelAsset({
     const clippingPlane = new THREE.Plane().setFromNormalAndCoplanarPoint(normal, pointOnPlane);
 
     scene.traverse((node) => {
-      if ((!node.isMesh && !node.userData.portfolioEdgeOverlay) || !node.material) return;
+      if (!node.isMesh || !node.material) return;
       const materials = Array.isArray(node.material) ? node.material : [node.material];
       materials.forEach((material) => {
         material.clippingPlanes = clipping.enabled ? [clippingPlane] : [];
@@ -366,7 +207,7 @@ function ModelAsset({
         material.needsUpdate = true;
       });
     });
-  }, [clipping, edgeOverlays, modelBounds, scene]);
+  }, [clipping, modelBounds, scene]);
 
   const handleDoubleClick = useCallback((event) => {
     event.stopPropagation();
