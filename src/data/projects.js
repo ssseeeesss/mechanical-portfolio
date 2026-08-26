@@ -19,8 +19,12 @@ const projects = [
     ],
     result: '围绕六自由度运动映射和手指数据采集形成仿生机构设计、参数化建模、模块化装配与样机迭代能力；可在 3D 查看器中查看当前轻量化数采装置模型。',
     highlights: ['六主动自由度', '四连杆 + 扭转弹簧', '轻量化 / 拓扑优化', '卡扣与减震结构', '工程图 / BOM'],
-    images: [],
-    mediaNote: '项目图片暂未公开，可打开 3D 查看器浏览模型',
+    images: [
+      `${BASE}projects/umi-h/9707fac131ba08ddcb799707b417f236.png`,
+      `${BASE}projects/umi-h/8eedd9add49b4f55414b1799c0c18ba5.png`,
+      `${BASE}projects/umi-h/d7b012e3e2a90cac6a2719cd15bfdccb.png`,
+    ],
+    mediaNote: 'UMI-H 无本体化数据采集设备整机与结构细节图片',
     model: {
       status: 'ready',
       src: `${BASE}models/UMI-H.glb`,
