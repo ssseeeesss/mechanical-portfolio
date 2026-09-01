@@ -14,7 +14,6 @@ const RECORD_HEADER_BYTES = 32;
 const DEFAULT_EDGE_EXPORT_SETTINGS = { segmentLimit: 2000, samplingMode: 'uniform' };
 const MODEL_EDGE_EXPORT_SETTINGS = new Map([
   ['CCTV管道检测车.glb', { segmentLimit: 1400, samplingMode: 'uniform' }],
-  ['UMI-H.glb', { segmentLimit: 320, samplingMode: 'longest' }],
 ]);
 
 function toArrayBuffer(buffer) {

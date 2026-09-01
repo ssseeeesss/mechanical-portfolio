@@ -31,9 +31,11 @@ npm run preview
 - 奖项信息：`src/data/awards.js`
 - 项目图片：`public/projects/`
 - 公开个人图片：`public/personal/`
-- 原始三维模型：`public/models/*.glb`，用于公开下载
+- 经确认可公开的三维模型：`public/models/*.glb`
 - 轻量查看模型：`public/models/viewer/*.glb`，由 14-bit 位置量化与 Meshopt 自动生成
 - 三维模型边线：`public/models/*.edges` 与 `public/models/viewer/*.edges`
+
+涉及实习公司的项目图片、原始 CAD/GLB、工程图、BOM、URDF、仿真文件和内部截图不放入公开目录。未经书面授权，不要将受保密协议约束的项目资料提交到仓库或部署到网站。
 
 更新原始 GLB 后运行 `npm run generate:model-assets`，依次重新生成轻量查看模型和对应边线。不要直接编辑 `public/models/viewer/` 中的生成文件。
 
