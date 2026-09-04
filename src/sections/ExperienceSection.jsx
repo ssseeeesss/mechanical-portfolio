@@ -5,7 +5,7 @@ import './ExperienceSection.css';
 
 const internshipRecords = [
   {
-    company: '具身智能设备企业（实习）',
+    company: '飞捷科思智能科技（上海）有限公司',
     title: '机械结构工程师',
     date: '2026.06 — 至今',
     sections: [
@@ -47,7 +47,7 @@ const internshipRecords = [
     ],
   },
   {
-    company: '机器人企业（实习）',
+    company: '四川省一千帧人工智能科技有限责任公司',
     title: '机械结构工程师',
     date: '2026.01 — 2026.03',
     sections: [
