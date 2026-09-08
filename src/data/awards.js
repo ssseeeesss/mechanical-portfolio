@@ -4,7 +4,7 @@ const awards = [
   {
     title: '全国大学生机械创新设计大赛',
     subtitle: '国家级三等奖 · National Mechanical Innovation Design Competition · 3rd Prize (National)',
-    image: `${BASE}personal/机械设计创新大赛国家级三等奖.jpg`,
+    image: `${BASE}personal/mechanical-innovation-national-third-prize.jpg`,
     rank: 1,
   },
   {
