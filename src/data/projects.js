@@ -21,6 +21,8 @@ const projects = [
     highlights: ['29 自由度', '并联式连杆结构', '关节电机选型', '机械限位 / 整机走线', 'URDF / ROS'],
     images: [
       `${BASE}projects/h1/h1-waist-legs-progress-20260923.jpg`,
+      `${BASE}projects/h1/h1-assembly-iso-20261004.png`,
+      `${BASE}projects/h1/h1-assembly-front-20261004.png`,
     ],
     mediaNote: 'H1 当前设计进度：腿部和腰部结构，整机设计尚未完成。',
     color: '#92a8ef',
