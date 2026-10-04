@@ -292,4 +292,18 @@ const projects = [
   },
 ];
 
-export default projects;
+// 项目展示顺序：优先展示当前重点项目，G1 保持在列表末尾。
+const projectOrder = ['umi-h', 'h1-humanoid', 'y1-wheeled-legged-robot'];
+const projectOrderIndex = new Map(projectOrder.map((id, index) => [id, index]));
+
+const orderedProjects = [...projects].sort((a, b) => {
+  const aIsG1 = a.id === 'g1-exoskeleton-glove';
+  const bIsG1 = b.id === 'g1-exoskeleton-glove';
+  if (aIsG1 !== bIsG1) return aIsG1 ? 1 : -1;
+
+  const aIndex = projectOrderIndex.get(a.id) ?? projectOrder.length;
+  const bIndex = projectOrderIndex.get(b.id) ?? projectOrder.length;
+  return aIndex - bIndex;
+});
+
+export default orderedProjects;
