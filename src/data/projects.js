@@ -63,8 +63,11 @@ const projects = [
     ],
     result: '完成 G1 六自由度外骨骼手套需求分析、竞品调研与三维 Demo，为下一代产品方案提供输入。',
     highlights: ['六自由度', '四连杆随动机构', '竞品调研', 'SolidWorks Demo', '下一代预研'],
-    images: [],
-    mediaNote: '实习项目资料受保密约定限制，未公开展示；面试时可现场讲解。',
+    images: [
+      `${BASE}projects/g1/196cd8b772f7761a6f4e05ebc3657f2e.png`,
+      `${BASE}projects/g1/3c8060a56b41818f9b100210d28d3a62.png`,
+    ],
+    mediaNote: 'G1 外骨骼手套 Demo 三维模型',
     color: '#6eb8a7',
   },
   {
@@ -85,8 +88,17 @@ const projects = [
     ],
     result: '通过 IP67（1 m 水深 / 30 min）防护试验；轮腿连接件减重 12%、刚度提升 8%；完成 URDF / ROS 仿真环境部署，配合算法团队推进样机仿真验证与零部件采购落地。',
     highlights: ['IP67 防水', 'GB/T 3452.3 静密封', 'Fusion 360 生成式设计', '减重 12% / 刚度 +8%', 'URDF / ROS'],
-    images: [],
-    mediaNote: '实习项目资料受保密约定限制，未公开展示；面试时可现场讲解。',
+    images: [
+      `${BASE}projects/y1/3284b9e95383b832e867a83cf2682780.png`,
+      `${BASE}projects/y1/3c94c21226109bde202338ef23377442.png`,
+      `${BASE}projects/y1/ae916ab8f341f3616c3c3b18d7d4f065.png`,
+      `${BASE}projects/y1/a37d18af2e90afe21e25ddd42077f83b.jpg`,
+      `${BASE}projects/y1/d2f8aa2beece8e04fe646b677e91e562.jpg`,
+      `${BASE}projects/y1/146427574b680fb94d816fe0496350b7.jpg`,
+      `${BASE}projects/y1/8c57074cb8de4a707ee85b134daaab7d.jpg`,
+      `${BASE}projects/y1/1fe29c5ab040b9a656f641ec41073e86.jpg`,
+    ],
+    mediaNote: 'Y1 轮足机器狗整机与结构细节图片',
     color: '#8fb3c9',
   },
   {
@@ -201,8 +213,12 @@ const projects = [
     ],
     result: '完成管道爬行器、三自由度摄像头云台和自动收放线绕线车的结构方案与工程输出。',
     highlights: ['IP68 防水结构', 'O 形圈槽设计', '三自由度云台', '自动收放线', 'CNC / 钣金协同'],
-    images: [],
-    mediaNote: '实习项目资料受保密约定限制，未公开展示；面试时可现场讲解。',
+    images: [
+      `${BASE}projects/cctv/fc1542d00ac91419fe096f0dab7092cc.png`,
+      `${BASE}projects/cctv/3a5d729d552e96ff7c4873b429e17fa2.png`,
+      `${BASE}projects/cctv/e095053901076b4eb98c4d9a86fe89ae.png`,
+    ],
+    mediaNote: 'CCTV 管道检测机器人结构图片',
     color: '#37c8f3',
   },
   {
