@@ -42,8 +42,12 @@ const projects = [
     ],
     result: '样机整体重量减轻 20%，装配效率提升 30%，成功验证六自由度运动映射功能并配合完成专利申请；产品在 WAIC 展会展出，吸引多家公司采购，累计交付十余套。',
     highlights: ['六主动自由度', '四连杆 + 扭转弹簧', '轻量化 / 拓扑优化', '卡扣与减震结构', '工程图 / BOM'],
-    images: [],
-    mediaNote: '实习项目资料受保密约定限制，未公开展示；面试时可现场讲解。',
+    images: [
+      `${BASE}projects/umi-h/9707fac131ba08ddcb799707b417f236.png`,
+      `${BASE}projects/umi-h/8eedd9add49b4f55414b1799c0c18ba5.png`,
+      `${BASE}projects/umi-h/d7b012e3e2a90cac6a2719cd15bfdccb.png`,
+    ],
+    mediaNote: 'UMI-H 无本体化数据采集设备外观与穿戴实拍',
     color: '#d39754',
   },
   {
